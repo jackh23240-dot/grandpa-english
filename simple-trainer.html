@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单句英语训练器 - 10 分钟循环 | Single Phrase English Trainer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .instructions {
+            background: #f7f7f7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            line-height: 2;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .instructions strong {
+            color: #667eea;
+        }
+
+        .phrase-select {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .phrase-select label {
+            font-size: 1.3rem;
+            color: #333;
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .phrase-select select {
+            font-size: 1.2rem;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            width: 100%;
+            max-width: 500px;
+            font-family: inherit;
+            cursor: pointer;
+            background: white;
+        }
+
+        .phrase-select select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .display {
+            background: linear-gradient(135deg, #f5f7fa, #e8ecf1);
+            border-radius: 15px;
+            padding: 40px 30px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .chinese {
+            font-size: 3rem;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 20px;
+            min-height: 70px;
+        }
+
+        .english {
+            font-size: 2.5rem;
+            color: #27ae60;
+            font-weight: bold;
+            min-height: 60px;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        button {
+            font-size: 1.3rem;
+            padding: 15px 35px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-stop {
+            background: #f87171;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #ef4444;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(248, 113, 113, 0.4);
+        }
+
+        .btn-test {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .btn-test:hover {
+            background: #f59e0b;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .filter-btn {
+            padding: 10px 18px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .chinese {
+                font-size: 2.2rem;
+            }
+
+            .english {
+                font-size: 1.8rem;
+            }
+
+            .timer {
+                font-size: 2rem;
+            }
+
+            button {
+                font-size: 1.1rem;
+                padding: 12px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎧 单句英语训练器</h1>
+        <p class="subtitle">Single Phrase English Trainer</p>
+
+        <div class="instructions">
+            <strong>学习模式 Learning Mode:</strong><br>
+            1️⃣ 选择一个短语 Choose a phrase<br>
+            2️⃣ 中文 → 英文 → 英文 (循环) Chinese → English → English (repeat)<br>
+            3️⃣ 10 分钟后自动停止 Auto-stop after 10 minutes
+        </div>
+
+        <!-- Category Filter -->
+        <div class="category-filter" id="categoryFilter">
+            <button class="filter-btn active" onclick="filterPhrases('all')">全部 All</button>
+            <button class="filter-btn" onclick="filterPhrases('问候')">问候</button>
+            <button class="filter-btn" onclick="filterPhrases('日常')">日常</button>
+            <button class="filter-btn" onclick="filterPhrases('购物')">购物</button>
+            <button class="filter-btn" onclick="filterPhrases('健康')">健康</button>
+            <button class="filter-btn" onclick="filterPhrases('其他')">其他</button>
+        </div>
+
+        <!-- Phrase Selector -->
+        <div class="phrase-select">
+            <label for="phrasePicker">📝 选择短语 Select a Phrase:</label>
+            <select id="phrasePicker" onchange="updateDisplay()">
+                <!-- Populated by JavaScript -->
+            </select>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer" id="timerDisplay">10:00</div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Display Area -->
+        <div class="display">
+            <div class="chinese" id="chineseDisplay">-</div>
+            <div class="english" id="englishDisplay">-</div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-start" onclick="start()">▶️ 开始学习 Start</button>
+            <button class="btn-test" onclick="testPhrase()">🔊 试听 Test</button>
+            <button class="btn-stop" onclick="stop()">⏹️ 停止 Stop</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-number" id="sessionsCompleted">0</span>
+                <span class="stat-label">完成次数<br>Sessions</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalMinutes">0</span>
+                <span class="stat-label">学习分钟<br>Minutes</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="phrasesPracticed">0</span>
+                <span class="stat-label">练习短语<br>Phrases</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            💡 每天 10 分钟，轻松学英语！<br>
+            10 minutes a day, learn English easily!
+        </div>
+    </div>
+
+    <script>
+        // 100 Common English Phrases with Categories
+        const phrases = [
+            // 问候 (1-15)
+            { cn: "你好！", en: "Hello!", category: "问候" },
+            { cn: "早上好。", en: "Good morning.", category: "问候" },
+            { cn: "下午好。", en: "Good afternoon.", category: "问候" },
+            { cn: "晚上好。", en: "Good evening.", category: "问候" },
+            { cn: "晚安。", en: "Good night.", category: "问候" },
+            { cn: "你好吗？", en: "How are you?", category: "问候" },
+            { cn: "我很好，谢谢。", en: "I'm fine, thank you.", category: "问候" },
+            { cn: "你呢？", en: "And you?", category: "问候" },
+            { cn: "很高兴认识你。", en: "Nice to meet you.", category: "问候" },
+            { cn: "你叫什么名字？", en: "What's your name?", category: "问候" },
+            { cn: "我叫……", en: "My name is...", category: "问候" },
+            { cn: "再见！", en: "Goodbye!", category: "问候" },
+            { cn: "回头见。", en: "See you later.", category: "问候" },
+            { cn: "明天见。", en: "See you tomorrow.", category: "问候" },
+            { cn: "祝你今天愉快。", en: "Have a nice day.", category: "问候" },
+            
+            // 日常 (16-40)
+            { cn: "谢谢。", en: "Thank you.", category: "日常" },
+            { cn: "非常感谢。", en: "Thank you very much.", category: "日常" },
+            { cn: "不客气。", en: "You're welcome.", category: "日常" },
+            { cn: "对不起。", en: "Sorry.", category: "日常" },
+            { cn: "没关系。", en: "It's okay.", category: "日常" },
+            { cn: "打扰一下。", en: "Excuse me.", category: "日常" },
+            { cn: "请。", en: "Please.", category: "日常" },
+            { cn: "你能帮我吗？", en: "Can you help me?", category: "日常" },
+            { cn: "当然。", en: "Sure.", category: "日常" },
+            { cn: "我不明白。", en: "I don't understand.", category: "日常" },
+            { cn: "你能再说一遍吗？", en: "Can you say that again?", category: "日常" },
+            { cn: "请慢一点。", en: "Please speak slower.", category: "日常" },
+            { cn: "这个用英语怎么说？", en: "What's this in English?", category: "日常" },
+            { cn: "我饿了。", en: "I'm hungry.", category: "日常" },
+            { cn: "我渴了。", en: "I'm thirsty.", category: "日常" },
+            { cn: "我累了。", en: "I'm tired.", category: "日常" },
+            { cn: "我开心。", en: "I'm happy.", category: "日常" },
+            { cn: "我难过。", en: "I'm sad.", category: "日常" },
+            { cn: "小心！", en: "Be careful!", category: "日常" },
+            { cn: "加油！", en: "Come on!", category: "日常" },
+            { cn: "祝你好运！", en: "Good luck!", category: "日常" },
+            { cn: "做得好！", en: "Well done!", category: "日常" },
+            { cn: "等一下。", en: "Wait a moment.", category: "日常" },
+            { cn: "我们走吧。", en: "Let's go.", category: "日常" },
+            { cn: "没问题。", en: "No problem.", category: "日常" },
+            
+            // 购物 (41-55)
+            { cn: "多少钱？", en: "How much is it?", category: "购物" },
+            { cn: "太贵了。", en: "It's too expensive.", category: "购物" },
+            { cn: "我要买这个。", en: "I'll take this.", category: "购物" },
+            { cn: "你想要点什么？", en: "What would you like?", category: "购物" },
+            { cn: "我想要水。", en: "I'd like some water.", category: "购物" },
+            { cn: "给你。", en: "Here you are.", category: "购物" },
+            { cn: "有折扣吗？", en: "Is there a discount?", category: "购物" },
+            { cn: "可以刷卡吗？", en: "Can I pay by card?", category: "购物" },
+            { cn: "我用现金。", en: "I pay with cash.", category: "购物" },
+            { cn: "有别的颜色吗？", en: "Do you have other colors?", category: "购物" },
+            { cn: "有别的尺寸吗？", en: "Do you have other sizes?", category: "购物" },
+            { cn: "我试试。", en: "Let me try it.", category: "购物" },
+            { cn: "这个适合我。", en: "This fits me.", category: "购物" },
+            { cn: "太贵了，便宜点。", en: "Too expensive, cheaper please.", category: "购物" },
+            { cn: "我下次再来。", en: "I'll come back next time.", category: "购物" },
+            
+            // 健康 (56-70)
+            { cn: "我不舒服。", en: "I don't feel well.", category: "健康" },
+            { cn: "我头痛。", en: "I have a headache.", category: "健康" },
+            { cn: "我发烧。", en: "I have a fever.", category: "健康" },
+            { cn: "我需要医生。", en: "I need a doctor.", category: "健康" },
+            { cn: "医院在哪里？", en: "Where is the hospital?", category: "健康" },
+            { cn: "药店在哪里？", en: "Where is the pharmacy?", category: "健康" },
+            { cn: "救命！", en: "Help!", category: "健康" },
+            { cn: "叫救护车！", en: "Call an ambulance!", category: "健康" },
+            { cn: "我过敏。", en: "I have an allergy.", category: "健康" },
+            { cn: "我有高血压。", en: "I have high blood pressure.", category: "健康" },
+            { cn: "我要吃药。", en: "I need to take medicine.", category: "健康" },
+            { cn: "多喝水。", en: "Drink more water.", category: "健康" },
+            { cn: "保重。", en: "Take care.", category: "健康" },
+            { cn: "早日康复。", en: "Get well soon.", category: "健康" },
+            { cn: "我很好。", en: "I'm okay.", category: "健康" },
+            
+            // 其他 (71-100)
+            { cn: "几点了？", en: "What time is it?", category: "其他" },
+            { cn: "今天星期几？", en: "What day is it today?", category: "其他" },
+            { cn: "今天天气怎么样？", en: "How's the weather today?", category: "其他" },
+            { cn: "今天天晴。", en: "It's sunny.", category: "其他" },
+            { cn: "今天下雨。", en: "It's rainy.", category: "其他" },
+            { cn: "今天多云。", en: "It's cloudy.", category: "其他" },
+            { cn: "我冷。", en: "I'm cold.", category: "其他" },
+            { cn: "我热。", en: "I'm hot.", category: "其他" },
+            { cn: "你来自哪里？", en: "Where are you from?", category: "其他" },
+            { cn: "我来自中国。", en: "I'm from China.", category: "其他" },
+            { cn: "你住在哪里？", en: "Where do you live?", category: "其他" },
+            { cn: "这是我的朋友。", en: "This is my friend.", category: "其他" },
+            { cn: "生日快乐！", en: "Happy birthday!", category: "其他" },
+            { cn: "新年快乐！", en: "Happy New Year!", category: "其他" },
+            { cn: "圣诞快乐！", en: "Merry Christmas!", category: "其他" },
+            { cn: "我想念你。", en: "I miss you.", category: "其他" },
+            { cn: "我爱你。", en: "I love you.", category: "其他" },
+            { cn: "我们是朋友。", en: "We are friends.", category: "其他" },
+            { cn: "听起来不错。", en: "That sounds good.", category: "其他" },
+            { cn: "我同意。", en: "I agree.", category: "其他" },
+            { cn: "也许吧。", en: "Maybe.", category: "其他" },
+            { cn: "洗手间在哪里？", en: "Where is the bathroom?", category: "其他" },
+            { cn: "这边请。", en: "This way, please.", category: "其他" },
+            { cn: "我迷路了。", en: "I'm lost.", category: "其他" },
+            { cn: "你能给我你的号码吗？", en: "Can you give me your number?", category: "其他" },
+            { cn: "给我打电话。", en: "Call me.", category: "其他" },
+            { cn: "恭喜你！", en: "Congratulations!", category: "其他" },
+            { cn: "干杯！", en: "Cheers!", category: "其他" },
+            { cn: "好吃。", en: "It's delicious.", category: "其他" },
+            { cn: "我饱了。", en: "I'm full.", category: "其他" },
+            { cn: "现在三点钟。", en: "It's three o'clock.", category: "其他" }
+        ];
+
+        // App State
+        let running = false;
+        let endTime = 0;
+        let timerInterval = null;
+        const TOTAL_MIN = 10;
+        
+        // User Stats
+        let userStats = {
+            sessionsCompleted: 0,
+            totalMinutes: 0,
+            phrasesPracticed: []
+        };
+
+        // Initialize
+        const phrasePicker = document.getElementById('phrasePicker');
+        const synth = window.speechSynthesis;
+
+        // Load stats
+        function loadStats() {
+            const saved = localStorage.getItem('englishTrainerStats');
+            if (saved) {
+                userStats = JSON.parse(saved);
+                updateStatsDisplay();
+            }
+        }
+
+        // Save stats
+        function saveStats() {
+            localStorage.setItem('englishTrainerStats', JSON.stringify(userStats));
+        }
+
+        // Update stats display
+        function updateStatsDisplay() {
+            document.getElementById('sessionsCompleted').textContent = userStats.sessionsCompleted;
+            document.getElementById('totalMinutes').textContent = userStats.totalMinutes;
+            document.getElementById('phrasesPracticed').textContent = userStats.phrasesPracticed.length;
+        }
+
+        // Populate phrases
+        function populatePhrases(filter = 'all') {
+            phrasePicker.innerHTML = '';
+            
+            const filtered = filter === 'all' 
+                ? phrases 
+                : phrases.filter(p => p.category === filter);
+            
+            filtered.forEach((phrase, idx) => {
+                const option = document.createElement('option');
+                option.value = phrases.indexOf(phrase);
+                option.textContent = `${phrase.cn} → ${phrase.en}`;
+                phrasePicker.appendChild(option);
+            });
+            
+            if (filtered.length > 0) {
+                updateDisplay();
+            }
+        }
+
+        // Filter phrases
+        function filterPhrases(category) {
+            populatePhrases(category);
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(category) || (category === 'all' && btn.textContent.includes('全部'))) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Update display
+        function updateDisplay() {
+            const selectedIdx = parseInt(phrasePicker.value);
+            const phrase = phrases[selectedIdx];
+            
+            if (phrase) {
+                document.getElementById('chineseDisplay').textContent = phrase.cn;
+                document.getElementById('englishDisplay').textContent = phrase.en;
+            }
+        }
+
+        // Speak function
+        function say(text, lang) {
+            return new Promise(resolve => {
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = lang;
+                utter.rate = 0.85;
+                utter.onend = resolve;
+                synth.speak(utter);
+            });
+        }
+
+        // Test phrase
+        async function testPhrase() {
+            stop();
+            const selectedIdx = parseInt(phrasePicker.value);
+            const phrase = phrases[selectedIdx];
+            
+            document.getElementById('chineseDisplay').textContent = phrase.cn;
+            document.getElementById('englishDisplay').textContent = phrase.en;
+            
+            await say(phrase.cn, 'zh-CN');
+            await say(phrase.en, 'en-US');
+            await say(phrase.en, 'en-US');
+        }
+
+        // Repeat single phrase loop
+        async function repeatSinglePhrase() {
+            if (!running || Date.now() > endTime) {
+                completeSession();
+                return;
+            }
+
+            const selectedIdx = parseInt(phrasePicker.value);
+            const phrase = phrases[selectedIdx];
+
+            // Display and speak Chinese
+            document.getElementById('chineseDisplay').textContent = phrase.cn;
+            document.getElementById('englishDisplay').textContent = '';
+            await say(phrase.cn, 'zh-CN');
+
+            // Display and speak English twice
+            document.getElementById('englishDisplay').textContent = phrase.en;
+            await say(phrase.en, 'en-US');
+            await say(phrase.en, 'en-US');
+
+            // Continue loop
+            if (running) repeatSinglePhrase();
+        }
+
+        // Start session
+        function start() {
+            if (running) return;
+
+            running = true;
+            endTime = Date.now() + TOTAL_MIN * 60 * 1000;
+            
+            // Start timer
+            updateTimerDisplay();
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+            
+            // Start loop
+            repeatSinglePhrase();
+        }
+
+        // Stop session
+        function stop() {
+            if (!running) return;
+            
+            running = false;
+            clearInterval(timerInterval);
+            synth.cancel();
+        }
+
+        // Complete session
+        function completeSession() {
+            stop();
+            userStats.sessionsCompleted++;
+            userStats.totalMinutes += TOTAL_MIN;
+            
+            const selectedIdx = parseInt(phrasePicker.value);
+            if (!userStats.phrasesPracticed.includes(selectedIdx)) {
+                userStats.phrasesPracticed.push(selectedIdx);
+            }
+            
+            saveStats();
+            updateStatsDisplay();
+            
+            alert(`🎉 10 分钟练习完成！\n\n10-minute session complete!\n\n继续保持！Keep it up!`);
+        }
+
+        // Update timer
+        function updateTimerDisplay() {
+            const timeLeft = Math.max(0, endTime - Date.now());
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+            
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+            
+            // Update progress bar
+            const totalMs = TOTAL_MIN * 60 * 1000;
+            const progress = ((totalMs - timeLeft) / totalMs) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            populatePhrases();
+            loadStats();
+        });
+
+        // Stop speaking when page closes
+        window.addEventListener('beforeunload', () => {
+            synth.cancel();
+        });
+    </script>
+</body>
+</html>

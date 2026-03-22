@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爷爷奶奶学英语 - Grandparent English Learning</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📚 爷爷奶奶学英语</h1>
+            <p class="subtitle">Grandparent English Learning</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="progress-text">学习进度：<span id="progressText">0%</span></p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" onclick="showSection('home')">🏠 首页</button>
+            <button class="nav-btn" onclick="showSection('phrases')">🗣️ 短语</button>
+            <button class="nav-btn" onclick="showSection('lessons')">📖 课程</button>
+            <button class="nav-btn" onclick="showSection('practice')">✏️ 练习</button>
+            <button class="nav-btn" onclick="showSection('review')">⭐ 复习</button>
+        </nav>
+
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="welcome-card">
+                <h2>👋 欢迎！Welcome!</h2>
+                <p class="welcome-text">今天想学什么呢？<br>What would you like to learn today?</p>
+                <div class="daily-quote">
+                    <p class="quote-text" id="dailyQuote">"Every day is a new beginning."</p>
+                    <p class="quote-chinese">"每一天都是新的开始"</p>
+                    <button class="speak-btn" onclick="speakQuote()">🔊 朗读</button>
+                </div>
+            </div>
+
+            <div class="quick-start">
+                <h3>🚀 快速开始 Quick Start</h3>
+                <div class="quick-cards">
+                    <div class="quick-card" onclick="startLesson(0)">
+                        <span class="quick-emoji">👨‍👩‍👧</span>
+                        <span class="quick-title">家庭 Family</span>
+                    </div>
+                    <div class="quick-card" onclick="startLesson(1)">
+                        <span class="quick-emoji">🍎</span>
+                        <span class="quick-title">食物 Food</span>
+                    </div>
+                    <div class="quick-card" onclick="startLesson(2)">
+                        <span class="quick-emoji">🏥</span>
+                        <span class="quick-title">健康 Health</span>
+                    </div>
+                    <div class="quick-card" onclick="startLesson(3)">
+                        <span class="quick-emoji">🛒</span>
+                        <span class="quick-title">购物 Shopping</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h3>📊 我的学习 My Progress</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number" id="lessonsCompleted">0</span>
+                        <span class="stat-label">完成课程<br>Lessons</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="wordsLearned">0</span>
+                        <span class="stat-label">学会单词<br>Words</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="phrasesLearned">0</span>
+                        <span class="stat-label">学会短语<br>Phrases</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="practiceScore">0</span>
+                        <span class="stat-label">练习得分<br>Score</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phrases Section -->
+        <section id="phrases" class="section">
+            <h2>🗣️ 100 常用短语 100 Common Phrases</h2>
+            <div class="phrases-intro">
+                <p>每天学习 10 分钟，轻松掌握 100 个常用英语短语<br>Learn 10 minutes a day, master 100 common English phrases</p>
+            </div>
+            
+            <!-- Category Filter -->
+            <div class="category-filter">
+                <button class="filter-btn active" onclick="filterPhrases('all')">全部 All</button>
+                <button class="filter-btn" onclick="filterPhrases('问候')">问候</button>
+                <button class="filter-btn" onclick="filterPhrases('自我介绍')">自我介绍</button>
+                <button class="filter-btn" onclick="filterPhrases('日常生活')">日常生活</button>
+                <button class="filter-btn" onclick="filterPhrases('购物')">购物</button>
+                <button class="filter-btn" onclick="filterPhrases('健康')">健康</button>
+                <button class="filter-btn" onclick="filterPhrases('问路')">问路</button>
+                <button class="filter-btn" onclick="filterPhrases('紧急')">紧急</button>
+                <button class="filter-btn" onclick="filterPhrases('礼貌用语')">礼貌用语</button>
+            </div>
+            
+            <!-- Audio Learning Mode -->
+            <div class="audio-mode-card">
+                <h3>🎧 跟读学习模式 Listen & Repeat Mode</h3>
+                <p class="audio-mode-desc">
+                    每个短语学习 10 分钟：<br>
+                    中文 → 英文 → 英文 → 重复 10 分钟<br>
+                    Each phrase for 10 minutes:<br>
+                    Chinese → English → English → Repeat for 10 minutes
+                </p>
+                <div class="audio-controls">
+                    <div class="phrase-selector">
+                        <label>选择短语 Select Phrase:</label>
+                        <select id="phraseSelect" onchange="updatePhraseDisplay()">
+                            <!-- Populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="timer-display">
+                        <span class="timer" id="timerDisplay">10:00</span>
+                    </div>
+                    <div class="audio-buttons">
+                        <button class="audio-btn start" onclick="startAudioLearning()">▶️ 开始学习 Start</button>
+                        <button class="audio-btn pause" onclick="pauseAudioLearning()">⏸️ 暂停 Pause</button>
+                        <button class="audio-btn stop" onclick="stopAudioLearning()">⏹️ 停止 Stop</button>
+                    </div>
+                    <div class="current-phrase-display" id="currentPhraseDisplay">
+                        <p class="current-chinese" id="currentChinese">选择短语开始学习</p>
+                        <p class="current-english" id="currentEnglish">Select a phrase to start</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phrases List -->
+            <div class="phrases-grid" id="phrasesGrid">
+                <!-- Phrases will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Lessons Section -->
+        <section id="lessons" class="section">
+            <h2>📖 课程 Lessons</h2>
+            <div class="lessons-list" id="lessonsList">
+                <!-- Lessons will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Lesson Content Section -->
+        <section id="lessonContent" class="section">
+            <button class="back-btn" onclick="showSection('lessons')">← 返回 Back</button>
+            <h2 id="lessonTitle">Lesson Title</h2>
+            <div class="words-grid" id="wordsGrid">
+                <!-- Words will be populated by JavaScript -->
+            </div>
+            <div class="lesson-nav">
+                <button class="nav-lesson-btn" onclick="previousLesson()">← 上一课</button>
+                <button class="nav-lesson-btn" onclick="nextLesson()">下一课 →</button>
+            </div>
+        </section>
+
+        <!-- Practice Section -->
+        <section id="practice" class="section">
+            <h2>✏️ 练习 Practice</h2>
+            <div class="practice-card">
+                <div class="practice-question">
+                    <p class="question-label">这个单词是什么意思？<br>What does this word mean?</p>
+                    <div class="question-word">
+                        <span class="word-emoji" id="practiceEmoji">👨</span>
+                        <span class="word-english" id="practiceWord">Father</span>
+                    </div>
+                    <button class="speak-btn large" onclick="speakPracticeWord()">🔊 听发音</button>
+                </div>
+                <div class="answers-grid" id="answersGrid">
+                    <!-- Answer choices will be populated by JavaScript -->
+                </div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="nextPracticeBtn" onclick="nextPracticeQuestion()" style="display:none;">下一题 Next →</button>
+            </div>
+            <div class="practice-progress">
+                <p>得分 Score: <span id="practiceScoreDisplay">0</span> / <span id="practiceTotal">10</span></p>
+            </div>
+        </section>
+
+        <!-- Review Section -->
+        <section id="review" class="section">
+            <h2>⭐ 复习 Review</h2>
+            <div class="review-intro">
+                <p>复习你学过的单词<br>Review the words you've learned</p>
+            </div>
+            <div class="review-grid" id="reviewGrid">
+                <!-- Reviewed words will be populated by JavaScript -->
+            </div>
+            <button class="reset-btn" onclick="resetProgress()">🔄 重置进度 Reset Progress</button>
+        </section>
+    </div>
+
+    <!-- Audio elements for pronunciation -->
+    <div id="audioContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
